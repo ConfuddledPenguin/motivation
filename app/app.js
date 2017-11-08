@@ -23,13 +23,13 @@ App.fn = App.prototype;
 App.fn.load = function(){
   var value;
 
-  if (value = localStorage.dob)
-    this.dob = new Date(parseInt(value));
+  if (value = localStorage.dob_moment2)
+    this.dob = moment(value);
 };
 
 App.fn.save = function(){
   if (this.dob)
-    localStorage.dob = this.dob.getTime();
+    localStorage.dob_moment2 = this.dob.format();
 };
 
 App.fn.submit = function(e){
@@ -38,7 +38,7 @@ App.fn.submit = function(e){
   var input = this.$$('input')[0];
   if ( !input.valueAsDate ) return;
 
-  this.dob = input.valueAsDate;
+  this.dob = moment(input.valueAsDate);
   this.save();
   this.renderAgeLoop();
 };
@@ -52,11 +52,9 @@ App.fn.renderAgeLoop = function(){
 };
 
 App.fn.renderAge = function(){
-  var now       = new Date
-  var duration  = now - this.dob;
-  var years     = duration / 31556900000;
+  var a = moment().diff(this.dob, "years", true);
 
-  var majorMinor = years.toFixed(9).toString().split('.');
+  var majorMinor = a.toFixed(9).toString().split('.');
 
   requestAnimationFrame(function(){
     this.html(this.view('age')({
